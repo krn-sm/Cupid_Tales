@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💌 Checkpoint — The Cipher of Hearts</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rose: #c0392b;
+    --blush: #e8a0a0;
+    --petal: #f5d0d0;
+    --cream: #fdf6f0;
+    --ink: #2c1a1a;
+    --gold: #b8860b;
+    --gold-light: #d4a017;
+    --shadow: rgba(44,26,26,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Petal rain */
+  .petal-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .petal {
+    position: absolute;
+    top: -40px;
+    font-size: 1.2rem;
+    opacity: 0;
+    animation: fall linear infinite;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(192,57,43,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(192,57,43,0.05) 0%, transparent 60%),
+      repeating-linear-gradient(45deg, transparent, transparent 40px, rgba(192,57,43,0.012) 40px, rgba(192,57,43,0.012) 41px);
+    pointer-events: none;
+  }
+
+  .wrapper {
+    position: relative; z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 5rem;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeDown 0.9s ease both;
+  }
+  @keyframes fadeDown {
+    from { opacity:0; transform: translateY(-24px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .checkpoint-badge {
+    display: inline-block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--rose);
+    border: 1px solid var(--blush);
+    padding: 0.35rem 1.2rem;
+    margin-bottom: 1.2rem;
+    background: rgba(245,208,208,0.3);
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-style: italic;
+    color: var(--rose);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  .subtitle {
+    font-size: 1.05rem;
+    font-style: italic;
+    color: #7a4444;
+    letter-spacing: 0.03em;
+  }
+
+  /* Divider */
+  .divider {
+    display: flex; align-items: center; gap: 0.8rem;
+    margin: 2rem 0;
+    animation: fadeIn 1s 0.3s ease both;
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--blush), transparent);
+  }
+  .divider-heart { font-size: 1.1rem; color: var(--rose); }
+
+  /* Card */
+  .card {
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(192,57,43,0.15);
+    border-radius: 2px;
+    padding: 2rem 2.2rem;
+    margin-bottom: 1.8rem;
+    box-shadow: 0 4px 30px var(--shadow), inset 0 0 0 1px rgba(255,255,255,0.6);
+    animation: fadeIn 0.8s ease both;
+    backdrop-filter: blur(4px);
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  /* ── PUZZLE 1: Caesar Cipher ── */
+  .cipher-text {
+    font-family: 'Courier New', monospace;
+    font-size: 1.15rem;
+    background: var(--petal);
+    border: 1px dashed var(--blush);
+    padding: 1rem 1.2rem;
+    letter-spacing: 0.18em;
+    line-height: 1.9;
+    color: var(--ink);
+    word-break: break-all;
+    margin-bottom: 0.7rem;
+    border-radius: 1px;
+  }
+  .hint {
+    font-size: 0.88rem;
+    color: #9a5555;
+    font-style: italic;
+  }
+
+  /* ── PUZZLE 2: Emoji Decode ── */
+  .emoji-sequence {
+    font-size: 2rem;
+    letter-spacing: 0.3em;
+    text-align: center;
+    padding: 1rem 0;
+    display: block;
+  }
+  .emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+  .emoji-item {
+    background: var(--petal);
+    border: 1px solid var(--blush);
+    padding: 0.5rem 0.3rem;
+    text-align: center;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 1px;
+    user-select: none;
+  }
+  .emoji-item:hover { background: var(--blush); border-color: var(--rose); }
+  .emoji-item.selected { background: var(--rose); color: white; border-color: var(--rose); }
+  .emoji-item .e { font-size: 1.4rem; display: block; margin-bottom: 0.2rem; }
+
+  /* ── PUZZLE 3: Word Lock ── */
+  .word-lock {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-top: 0.5rem;
+  }
+  .clue-row {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+  .clue-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--rose);
+    min-width: 1.5rem;
+  }
+  .clue-text { font-size: 0.95rem; flex: 1; }
+  .clue-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--blush);
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--rose);
+    width: 130px;
+    text-align: center;
+    outline: none;
+    padding: 0.2rem 0.4rem;
+    letter-spacing: 0.1em;
+    transition: border-color 0.2s;
+  }
+  .clue-input:focus { border-color: var(--rose); }
+  .clue-input.correct { border-color: #2e8b57; color: #2e8b57; }
+  .clue-input.wrong   { border-color: var(--rose); animation: shake 0.3s; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-4px)}
+    75%{transform:translateX(4px)}
+  }
+
+  /* ── Final Unlock ── */
+  .unlock-section {
+    text-align: center;
+    margin-top: 2rem;
+    animation: fadeIn 1s 0.5s both;
+  }
+  .unlock-input-wrap {
+    display: flex;
+    gap: 0;
+    max-width: 380px;
+    margin: 1.2rem auto 0;
+    border: 1.5px solid var(--blush);
+    overflow: hidden;
+    border-radius: 1px;
+  }
+  .unlock-input {
+    flex: 1;
+    background: white;
+    border: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    padding: 0.8rem 1rem;
+    color: var(--ink);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    outline: none;
+  }
+  .unlock-btn {
+    background: var(--rose);
+    color: white;
+    border: none;
+    padding: 0 1.4rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .unlock-btn:hover { background: #a93226; }
+
+  .progress-bar-wrap {
+    display: flex; gap: 0.5rem; justify-content: center; margin: 1.5rem 0 0.5rem;
+  }
+  .progress-pip {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--petal);
+    border: 1.5px solid var(--blush);
+    transition: all 0.4s;
+  }
+  .progress-pip.done { background: var(--rose); border-color: var(--rose); }
+
+  .unlock-msg {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #9a5555;
+    min-height: 1.4rem;
+    font-style: italic;
+  }
+
+  /* ── Reveal Box ── */
+  .reveal-box {
+    display: none;
+    background: linear-gradient(135deg, #2c1a1a 0%, #5a1a1a 100%);
+    color: var(--cream);
+    border-radius: 2px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    margin-top: 2rem;
+    position: relative;
+    overflow: hidden;
+    animation: revealPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes revealPop {
+    from { transform: scale(0.85); opacity:0; }
+    to   { transform: scale(1);    opacity:1; }
+  }
+  .reveal-box::before {
+    content:'';
+    position:absolute; inset:0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.015) 20px, rgba(255,255,255,0.015) 21px);
+  }
+  .reveal-box h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 0.6rem;
+  }
+  .reveal-code {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 8vw, 3.5rem);
+    letter-spacing: 0.25em;
+    color: white;
+    font-style: italic;
+    text-shadow: 0 0 30px rgba(212,160,23,0.5);
+  }
+  .reveal-sub {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: rgba(253,246,240,0.7);
+    font-style: italic;
+  }
+
+  /* Floating hearts bg */
+  .bg-heart {
+    position: fixed;
+    font-size: 5rem;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatHeart 20s ease-in-out infinite alternate;
+  }
+  @keyframes floatHeart {
+    from { transform: translateY(0) rotate(-5deg); }
+    to   { transform: translateY(-30px) rotate(5deg); }
+  }
+
+  /* Tooltip for cipher key */
+  .key-toggle {
+    font-size: 0.82rem;
+    color: var(--gold);
+    cursor: pointer;
+    text-decoration: underline dotted;
+    margin-left: 0.5rem;
+    font-style: italic;
+  }
+  .cipher-key {
+    display: none;
+    font-size: 0.8rem;
+    font-family: 'Courier New', monospace;
+    background: var(--petal);
+    padding: 0.6rem 0.8rem;
+    margin-top: 0.8rem;
+    border-left: 3px solid var(--rose);
+    line-height: 1.7;
+    color: var(--ink);
+    letter-spacing: 0.08em;
+  }
+
+  @media(max-width:500px) {
+    .clue-row { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+    .clue-input { width: 100%; }
+    .emoji-grid { grid-template-columns: repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating bg hearts -->
+<div class="bg-heart" style="top:10%;left:5%">♥</div>
+<div class="bg-heart" style="top:60%;right:4%;animation-delay:-7s;font-size:7rem">♥</div>
+<div class="bg-heart" style="bottom:8%;left:30%;animation-delay:-12s;font-size:4rem">♥</div>
+
+<!-- Petal rain -->
+<div class="petal-container" id="petals"></div>
+
+<div class="wrapper">
+
+  <div class="header">
+    <div class="checkpoint-badge">❧ Checkpoint III ❧</div>
+    <h1>The Cipher of Hearts</h1>
+    <p class="subtitle">Three secrets guard the way forward. Can you unlock them all?</p>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar-wrap">
+    <div class="progress-pip" id="pip1"></div>
+    <div class="progress-pip" id="pip2"></div>
+    <div class="progress-pip" id="pip3"></div>
+  </div>
+
+  <div class="divider"><span class="divider-heart">♥</span></div>
+
+  <!-- ── PUZZLE 1: Caesar Cipher ── -->
+  <div class="card" style="animation-delay:0.1s">
+    <div class="card-title">✦ Part I — The Shifted Verse</div>
+    <p style="font-size:0.95rem;margin-bottom:1rem;font-style:italic;">A lover wrote this message in code. Each letter has been shifted forward by the number of letters in the word <em>"LOVE"</em>. Decode it to find a single word answer.</p>
+    <div class="cipher-text">VSPH IW XLI WIGSRH FVMKLXIWX XLMRK MR XLI ASVPH</div>
+    <p class="hint">Hint: shift = 4 &nbsp;<span class="key-toggle" onclick="toggleKey()">show alphabet key ▾</span></p>
+    <div class="cipher-key" id="cipherKey">
+      A→W &nbsp; B→X &nbsp; C→Y &nbsp; D→Z &nbsp; E→A &nbsp; F→B &nbsp; G→C &nbsp; H→D &nbsp; I→E &nbsp; J→F<br>
+      K→G &nbsp; L→H &nbsp; M→I &nbsp; N→J &nbsp; O→K &nbsp; P→L &nbsp; Q→M &nbsp; R→N &nbsp; S→O &nbsp; T→P<br>
+      U→Q &nbsp; V→R &nbsp; W→S &nbsp; X→T &nbsp; Y→U &nbsp; Z→V
+    </div>
+    <div style="margin-top:1rem;display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
+      <input class="clue-input" id="ans1" placeholder="Your answer" maxlength="20" oninput="check1()" style="width:180px">
+      <span id="fb1" style="font-size:0.85rem;font-style:italic;color:#9a5555"></span>
+    </div>
+  </div>
+
+  <!-- ── PUZZLE 2: Emoji Decode ── -->
+  <div class="card" style="animation-delay:0.25s">
+    <div class="card-title">✦ Part II — The Emoji Codex</div>
+    <p style="font-size:0.95rem;margin-bottom:0.5rem;font-style:italic;">Each emoji below represents a letter. Match the sequence to spell out a hidden word. Select the emojis in the correct order that spell the word <strong style="font-style:normal">ROSES</strong> using the key below.</p>
+    <span class="emoji-sequence" id="emojiSeq">🌹 🎶 🌙 🌹 ⭐</span>
+    <p style="font-size:0.85rem;color:var(--rose);font-style:italic;margin-top:0.3rem">Tap the emojis below in the order they appear in the sequence above:</p>
+    <div class="emoji-grid" id="emojiGrid"></div>
+    <p style="font-size:0.85rem;margin-top:0.8rem;font-style:italic;color:#9a5555" id="emojiFb"></p>
+  </div>
+
+  <!-- ── PUZZLE 3: Word Clues ── -->
+  <div class="card" style="animation-delay:0.4s">
+    <div class="card-title">✦ Part III — The Heart's Riddle</div>
+    <p style="font-size:0.95rem;margin-bottom:1rem;font-style:italic;">Solve all three clues. The <em>first letter</em> of each answer spells the final key you need.</p>
+    <div class="word-lock">
+      <div class="clue-row">
+        <span class="clue-num">1.</span>
+        <span class="clue-text">Cupid's weapon, aimed at hearts. (5 letters)</span>
+        <input class="clue-input" id="w1" placeholder="_ _ _ _ _" maxlength="10" oninput="checkWord(1,'ARROW','w1','f1')">
+      </div>
+      <div style="font-size:0.8rem;color:#9a5555;font-style:italic;margin-left:1.5rem" id="f1"></div>
+      <div class="clue-row">
+        <span class="clue-num">2.</span>
+        <span class="clue-text">The month that holds Valentine's Day. (8 letters)</span>
+        <input class="clue-input" id="w2" placeholder="_ _ _ _ _ _ _ _" maxlength="10" oninput="checkWord(2,'FEBRUARY','w2','f2')">
+      </div>
+      <div style="font-size:0.8rem;color:#9a5555;font-style:italic;margin-left:1.5rem" id="f2"></div>
+      <div class="clue-row">
+        <span class="clue-num">3.</span>
+        <span class="clue-text">The sweetest gift, often given in a heart-shaped box. (9 letters)</span>
+        <input class="clue-input" id="w3" placeholder="_ _ _ _ _ _ _ _ _" maxlength="12" oninput="checkWord(3,'CHOCOLATE','w3','f3')">
+      </div>
+      <div style="font-size:0.8rem;color:#9a5555;font-style:italic;margin-left:1.5rem" id="f3"></div>
+    </div>
+    <p style="margin-top:1.2rem;font-size:0.88rem;font-style:italic;color:var(--gold)">First letters spell: <span id="acroDisplay" style="font-family:'Playfair Display',serif;letter-spacing:0.2em;color:var(--rose)">_ _ _</span></p>
+  </div>
+
+  <div class="divider"><span class="divider-heart">♥</span></div>
+
+  <!-- ── Final Unlock ── -->
+  <div class="unlock-section">
+    <p style="font-size:1rem;font-style:italic;color:var(--ink)">Combine all three answers to form the <strong>secret passphrase</strong>.<br>
+    <span style="font-size:0.85rem;color:#9a5555">Format: <em>Word1 · Word2 · Word3</em></span></p>
+    <div class="unlock-input-wrap">
+      <input class="unlock-input" id="finalInput" placeholder="ENTER PASSPHRASE" maxlength="40">
+      <button class="unlock-btn" onclick="tryUnlock()">Unlock ♥</button>
+    </div>
+    <p class="unlock-msg" id="unlockMsg"></p>
+  </div>
+
+  <!-- Reveal Box -->
+  <div class="reveal-box" id="revealBox">
+    <h2>✦ The Path is Revealed ✦</h2>
+    <div class="reveal-code" id="revealCode">ROMEO</div>
+    <p class="reveal-sub">Show this code to the next checkpoint keeper<br>and follow your heart to what awaits. 💌</p>
+  </div>
+
+</div>
+
+<script>
+// ── Petal Rain ──
+const petalEmojis = ['🌹','🌸','🌺','💮','💐'];
+const pc = document.getElementById('petals');
+for(let i=0;i<22;i++){
+  const p = document.createElement('div');
+  p.className='petal';
+  p.textContent = petalEmojis[Math.floor(Math.random()*petalEmojis.length)];
+  p.style.left = Math.random()*100+'%';
+  p.style.fontSize = (0.8+Math.random()*0.9)+'rem';
+  p.style.animationDuration = (6+Math.random()*10)+'s';
+  p.style.animationDelay = (Math.random()*12)+'s';
+  pc.appendChild(p);
+}
+
+// ── Cipher Key Toggle ──
+function toggleKey(){
+  const k=document.getElementById('cipherKey');
+  k.style.display = k.style.display==='block'?'none':'block';
+}
+
+// ── State ──
+const solved = {1:false, 2:false, 3:false};
+function updatePips(){
+  [1,2,3].forEach(i=>{
+    document.getElementById('pip'+i).classList.toggle('done', solved[i]);
+  });
+}
+
+// ── Puzzle 1: Caesar Cipher ──
+// Encoded: "VSPH IW XLI WIGSRH FVMKLXIWX XLMRK MR XLI ASVPH"
+// Decoded: "LOVE IS THE SECOND BRIGHTEST THING IN THE WORLD"
+// Answer: LOVE
+function check1(){
+  const v = document.getElementById('ans1').value.trim().toUpperCase();
+  const fb = document.getElementById('fb1');
+  const inp = document.getElementById('ans1');
+  if(v.length<2) { fb.textContent=''; inp.className='clue-input'; return; }
+  if(v==='LOVE'){
+    fb.textContent='✓ Correct!'; fb.style.color='#2e8b57';
+    inp.className='clue-input correct';
+    solved[1]=true; updatePips();
+  } else {
+    fb.textContent='Keep trying…'; fb.style.color='#9a5555';
+    inp.className='clue-input';
+    solved[1]=false; updatePips();
+  }
+}
+
+// ── Puzzle 2: Emoji Decode ──
+// Sequence: 🌹 🎶 🌙 🌹 ⭐ = R O S E S
+// Key: 🌹=R, 🎶=O, 🌙=S, 🌹=R, ⭐=S → Wait, let's use a clear unique mapping
+// Key: 🌹=R, 🎶=O, 🌙=S, 🌸=E, ⭐=S
+// Sequence for ROSES: 🌹 🎶 🌙 🌸 ⭐ → displayed above
+// Pool includes decoys
+const emojiKey = [
+  {e:'🌹', l:'R', real:true},
+  {e:'🎶', l:'O', real:true},
+  {e:'🌙', l:'S', real:true},
+  {e:'🌸', l:'E', real:true},
+  {e:'⭐', l:'S', real:true},
+  // decoys
+  {e:'💌', l:'L', real:false},
+  {e:'🕊️', l:'D', real:false},
+  {e:'🍀', l:'G', real:false},
+  {e:'🔥', l:'H', real:false},
+  {e:'🦋', l:'T', real:false},
+];
+// Correct sequence: 🌹 🎶 🌙 🌸 ⭐ (indices 0,1,2,3,4)
+document.getElementById('emojiSeq').textContent = '🌹 🎶 🌙 🌸 ⭐';
+const correctOrder = [0,1,2,3,4]; // indices into emojiKey
+let selectedOrder = [];
+
+// Shuffle display
+const displayItems = [...emojiKey].sort(()=>Math.random()-0.5);
+const grid = document.getElementById('emojiGrid');
+displayItems.forEach((item,di)=>{
+  const div = document.createElement('div');
+  div.className='emoji-item';
+  div.innerHTML=`<span class="e">${item.e}</span>${item.l}`;
+  div.onclick = ()=>{
+    const origIdx = emojiKey.indexOf(item);
+    // toggle
+    const pos = selectedOrder.indexOf(origIdx);
+    if(pos===-1){
+      selectedOrder.push(origIdx);
+      div.classList.add('selected');
+      div.querySelector('.e').textContent += ['¹','²','³','⁴','⁵'][selectedOrder.length-1]||'';
+    } else {
+      selectedOrder.splice(pos,1);
+      div.classList.remove('selected');
+      div.querySelector('.e').textContent = item.e;
+    }
+    checkEmoji();
+  };
+  grid.appendChild(div);
+});
+
+function checkEmoji(){
+  const fb = document.getElementById('emojiFb');
+  if(selectedOrder.length===5){
+    if(JSON.stringify(selectedOrder)===JSON.stringify(correctOrder)){
+      fb.textContent='✓ The Emoji Codex is cracked! ROSES revealed.';
+      fb.style.color='#2e8b57';
+      solved[2]=true; updatePips();
+    } else {
+      fb.textContent='Hmm… that sequence doesn\'t feel right. Try again.';
+      fb.style.color='#9a5555';
+      solved[2]=false; updatePips();
+    }
+  } else {
+    fb.textContent = selectedOrder.length+' / 5 selected';
+    fb.style.color='#9a5555';
+    solved[2]=false; updatePips();
+  }
+}
+
+// ── Puzzle 3: Word Clues ──
+const wordAnswers = {1:'ARROW', 2:'FEBRUARY', 3:'CHOCOLATE'};
+const wordSolved = {1:false,2:false,3:false};
+function checkWord(n, correct, inputId, fbId){
+  const v = document.getElementById(inputId).value.trim().toUpperCase();
+  const fb = document.getElementById(fbId);
+  const inp = document.getElementById(inputId);
+  if(v===correct){
+    fb.textContent='✓ Correct!'; fb.style.color='#2e8b57';
+    inp.className='clue-input correct';
+    wordSolved[n]=true;
+  } else {
+    fb.textContent='';
+    inp.className='clue-input';
+    wordSolved[n]=false;
+  }
+  updateAcro();
+}
+function updateAcro(){
+  const a1 = wordSolved[1]?'A':'_';
+  const a2 = wordSolved[2]?'F':'_';
+  const a3 = wordSolved[3]?'C':'_';
+  document.getElementById('acroDisplay').textContent = a1+' '+a2+' '+a3;
+  if(wordSolved[1]&&wordSolved[2]&&wordSolved[3]){
+    solved[3]=true; updatePips();
+  } else {
+    solved[3]=false; updatePips();
+  }
+}
+
+// ── Final Unlock ──
+// Passphrase = "LOVE ROSES AFC" … wait, let's make it clean.
+// Part 1 answer: LOVE
+// Part 2 answer: ROSES
+// Part 3 acrostic: A(rrow) F(ebruary) C(hocolate) = AFC
+// Passphrase: LOVE ROSES AFC
+// But let's make it the acrostic spells something romantic
+// A F C … not great. Let me change clues so acrostic = something nice
+// Clue 1: first letter A → keep ARROW
+// Clue 2: first letter = D → DESIRE (5 letters: "The longing in a lover's heart") → wait let me redo
+// Actually let me make acrostic = "RED":
+// 1. R: "Cupid's weapon" → ROSE? no. "The colour of passionate love" → RED? too obvious.
+// Let me make acrostic = "JOY": J=Juliet, O=?, Y=?
+// Easier: acrostic = "KEY" so the 3 words start with K,E,Y
+// K: ? E: ? Y: ?
+// Let me just keep it as AFC but the passphrase is simply LOVE · ROSES · AFC
+// Actually the puzzle says "first letter of each answer spells the final key"
+// So AFC is the key from part 3. The full passphrase then is LOVE ROSES AFC
+// That works! Let's keep it.
+
+const CORRECT_PASS = 'LOVE ROSES AFC';
+const SECRET_CODE = 'AMOUR';
+
+function tryUnlock(){
+  const v = document.getElementById('finalInput').value.trim().toUpperCase().replace(/[^A-Z ]/g,'');
+  const msg = document.getElementById('unlockMsg');
+  
+  if(!solved[1]||!solved[2]||!solved[3]){
+    msg.textContent = '✦ Complete all three parts before unlocking.';
+    return;
+  }
+  if(v===CORRECT_PASS){
+    msg.textContent='';
+    const box = document.getElementById('revealBox');
+    box.style.display='block';
+    box.scrollIntoView({behavior:'smooth', block:'center'});
+    fireworks();
+  } else {
+    msg.textContent = '✦ That\'s not quite right. The passphrase is: [Part 1 word] · [Part 2 word] · [Part 3 initials]';
+    document.getElementById('finalInput').style.animation='shake 0.3s';
+    setTimeout(()=>document.getElementById('finalInput').style.animation='',400);
+  }
+}
+
+function fireworks(){
+  const pc2 = document.getElementById('petals');
+  for(let i=0;i<30;i++){
+    const p=document.createElement('div');
+    p.className='petal';
+    p.textContent=['💕','💖','🌹','✨','💌'][Math.floor(Math.random()*5)];
+    p.style.left=Math.random()*100+'%';
+    p.style.animationDuration=(2+Math.random()*3)+'s';
+    p.style.animationDelay=(Math.random()*2)+'s';
+    p.style.fontSize=(1+Math.random()*1.2)+'rem';
+    pc2.appendChild(p);
+    setTimeout(()=>p.remove(),6000);
+  }
+}
+</script>
+</body>
+</html>
