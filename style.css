@@ -1,0 +1,375 @@
+/* ===========================
+   CUPID TALES MAP THEME
+=========================== */
+
+*,*::before,*::after{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+:root{
+
+--bg:#0a0608;
+--deep-red:#8b1a1a;
+--red:#b32025;
+
+--gold:#c9a84c;
+--gold-dim:#7a5c1e;
+
+--ink:#f2e2c4;
+
+}
+
+
+/* BODY */
+
+body{
+
+background:
+radial-gradient(
+ellipse at center,
+#1a0808 0%,
+#0a0608 70%
+);
+
+font-family:'IM Fell English',serif;
+
+color:var(--ink);
+
+overflow:hidden;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+height:100vh;
+
+}
+
+
+/* SOFT FILM GRAIN */
+
+body::after{
+
+content:"";
+
+position:fixed;
+inset:0;
+
+background-image:
+url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+
+opacity:.35;
+pointer-events:none;
+
+}
+
+
+/* =====================
+   START PAGE
+===================== */
+
+#startPage{
+
+text-align:center;
+
+animation:fadeUp 1s ease;
+
+padding:20px;
+
+}
+
+.title{
+
+font-family:'Cinzel Decorative',serif;
+
+font-size:clamp(2rem,7vw,3.2rem);
+
+color:var(--gold);
+
+text-shadow:
+0 0 40px rgba(201,168,76,.4);
+
+margin-bottom:15px;
+
+}
+
+.tag{
+
+color:rgba(242,226,196,.6);
+
+margin-bottom:40px;
+
+font-style:italic;
+
+}
+
+
+/* BUTTON */
+
+#startBtn{
+
+padding:14px 36px;
+
+background:transparent;
+
+border:1px solid var(--gold-dim);
+
+color:var(--gold);
+
+font-family:'IM Fell English';
+
+letter-spacing:.15em;
+
+cursor:pointer;
+
+transition:.4s;
+
+}
+
+#startBtn:hover{
+
+background:var(--gold);
+color:#0a0608;
+
+}
+
+
+/* =====================
+   PUZZLE PAGE
+===================== */
+
+#puzzlePage{
+
+display:none;
+
+flex-direction:column;
+
+align-items:center;
+
+width:100%;
+
+padding:25px;
+
+}
+
+#puzzlePage.active{
+display:flex;
+}
+
+
+/* TIMER */
+
+.timer{
+
+font-family:'Courier Prime';
+
+letter-spacing:.3em;
+
+color:var(--gold-dim);
+
+margin-bottom:20px;
+
+}
+
+
+/* MAP FRAME */
+
+#puzzle-container{
+
+width:92vw;
+max-width:420px;
+
+aspect-ratio:1;
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:6px;
+
+padding:12px;
+
+background:
+linear-gradient(
+160deg,
+#2a1a06,
+#1e1205
+);
+
+border:
+
+1px solid rgba(201,168,76,.2);
+
+box-shadow:
+0 15px 40px rgba(0,0,0,.7);
+
+}
+
+
+/* PUZZLE PIECES */
+
+.piece{
+
+border-radius:6px;
+
+background-size:cover;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:
+0 3px 8px rgba(0,0,0,.6);
+
+}
+
+.piece:active{
+transform:scale(.95);
+}
+
+.selected{
+
+outline:3px solid var(--gold);
+
+transform:scale(.95);
+
+}
+
+
+/* =====================
+   CLUE PAGE
+===================== */
+
+#cluePage{
+
+display:none;
+
+flex-direction:column;
+
+justify-content:center;
+
+align-items:center;
+
+text-align:center;
+
+padding:25px;
+
+height:100vh;
+
+}
+
+#cluePage.active{
+display:flex;
+}
+
+
+/* LETTER CARD */
+
+.clueCard{
+
+background:
+linear-gradient(
+160deg,
+#2a1a06,
+#1e1205
+);
+
+border:
+1px solid rgba(201,168,76,.25);
+
+padding:35px 25px;
+
+max-width:420px;
+
+box-shadow:
+0 20px 60px rgba(0,0,0,.8);
+
+animation:fadeUp .9s ease;
+
+}
+
+
+/* TEXT */
+
+.clue{
+
+margin-top:20px;
+
+font-size:20px;
+
+line-height:1.7;
+
+color:var(--gold);
+
+}
+
+
+/* =====================
+   FLOAT HEARTS
+===================== */
+
+.hearts::before{
+
+content:"♥ ♥ ♥ ♥ ♥";
+
+position:fixed;
+
+font-size:45px;
+
+opacity:.07;
+
+animation:floatHearts 18s linear infinite;
+
+white-space:nowrap;
+
+}
+
+@keyframes floatHearts{
+
+from{
+transform:translateY(100vh);
+}
+
+to{
+transform:translateY(-120vh);
+}
+
+}
+
+
+/* =====================
+   ANIMATION
+===================== */
+
+@keyframes fadeUp{
+
+from{
+opacity:0;
+transform:translateY(25px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+
+/* =====================
+   MOBILE OPTIMIZATION
+===================== */
+
+@media(max-width:480px){
+
+body{
+padding:10px;
+}
+
+.clue{
+font-size:18px;
+}
+
+}
