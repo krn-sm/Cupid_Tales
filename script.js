@@ -40,7 +40,7 @@ let pieces=[];
 const grid=3;
 
 let timer;
-let timeLeft=20;   // ✅ 20 seconds
+let timeLeft=40;   // ✅ 40 seconds
 
 
 
@@ -114,7 +114,7 @@ function startTimer(){
 
 clearInterval(timer);
 
-timeLeft=20;
+timeLeft=40;
 
 timer=setInterval(()=>{
 
