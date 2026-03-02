@@ -22,6 +22,17 @@ document.getElementById("winMusic");
 const arrow =
 document.getElementById("arrow");
 
+const enterBtn =
+document.getElementById("enterBtn");
+
+const passwordInput =
+document.getElementById("startPassword");
+
+const passMsg =
+document.getElementById("passMsg");
+
+const ACCESS_PASSWORD =
+"martin scorsese";
 
 let selected=null;
 let pieces=[];
@@ -49,18 +60,51 @@ page.classList.add("active");
 
 /* START */
 
-startBtn.onclick=()=>{
+enterBtn.onclick = checkAccess;
+
+passwordInput.addEventListener("keydown",(e)=>{
+
+if(e.key==="Enter"){
+checkAccess();
+}
+
+});
+
+
+function checkAccess(){
+
+const entered =
+passwordInput.value
+.trim()
+.toLowerCase();
+
+if(entered === ACCESS_PASSWORD){
 
 showPage(puzzlePage);
 
 createPuzzle();
 startTimer();
 
-/* start music after user interaction */
 bgMusic.volume=0.5;
 bgMusic.play().catch(()=>{});
 
-};
+}
+else{
+
+passMsg.textContent =
+"Incorrect password";
+
+document.querySelector(".pass-box")
+.style.animation="shake .3s";
+
+setTimeout(()=>{
+document.querySelector(".pass-box")
+.style.animation="";
+},400);
+
+}
+
+}
 
 
 
