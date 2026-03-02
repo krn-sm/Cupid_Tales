@@ -4,9 +4,11 @@
 
 <meta charset="UTF-8">
 <meta name="viewport"
-content="width=device-width,initial-scale=1.0">
+content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 
 <title>Cupid Tales Hunt</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=IM+Fell+English&family=Courier+Prime&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="style.css">
 
@@ -14,16 +16,13 @@ content="width=device-width,initial-scale=1.0">
 
 <body>
 
-<!-- FLOATING HEARTS -->
 <div class="hearts"></div>
 
+<!-- ================= START PAGE ================= -->
 
-<!-- START PAGE -->
 <section id="startPage" class="page active">
 
-<h1 class="title">
-💘 Cupid Tales
-</h1>
+<h1 class="title">💘 Cupid Tales</h1>
 
 <p class="tag">
 Treasure Hunt Checkpoint
@@ -37,13 +36,14 @@ Let's Begin ❤️
 
 
 
-<!-- PUZZLE PAGE -->
+<!-- ================= PUZZLE PAGE ================= -->
+
 <section id="puzzlePage" class="page">
 
 <h2>Cupid's Secret Map</h2>
 
 <div class="timer">
-⏳ <span id="time">60</span>
+⏳ <span id="time">60</span>s
 </div>
 
 <div id="puzzle-container"></div>
@@ -56,7 +56,8 @@ Tap two tiles to swap
 
 
 
-<!-- CLUE PAGE -->
+<!-- ================= CLUE PAGE ================= -->
+
 <section id="cluePage" class="page">
 
 <div class="clueCard">
@@ -65,11 +66,8 @@ Tap two tiles to swap
 
 <p class="clue">
 
-The ENEMY of my ENEMY  
-is my FRIEND.
-
+The ENEMY of my ENEMY is my FRIEND.
 <br><br>
-
 Tell me my Friend's name.
 
 </p>
@@ -77,8 +75,18 @@ Tell me my Friend's name.
 </div>
 
 </section>
+<!-- MUSIC -->
 
+<audio id="bgMusic" loop>
+<source src="romantic.mp3" type="audio/mpeg">
+</audio>
 
+<audio id="winMusic">
+<source src="success.mp3" type="audio/mpeg">
+</audio>
+
+<!-- CUPID ARROW -->
+<div id="arrow">🏹</div>
 <script src="script.js"></script>
 
 </body>

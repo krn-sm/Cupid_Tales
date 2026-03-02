@@ -1,7 +1,5 @@
-const startBtn = document.getElementById("startBtn");
-
-const startPage =
-document.getElementById("startPage");
+const startBtn =
+document.getElementById("startBtn");
 
 const puzzlePage =
 document.getElementById("puzzlePage");
@@ -15,19 +13,29 @@ document.getElementById("puzzle-container");
 const timerText =
 document.getElementById("time");
 
+const bgMusic =
+document.getElementById("bgMusic");
+
+const winMusic =
+document.getElementById("winMusic");
+
+const arrow =
+document.getElementById("arrow");
+
 
 let selected=null;
 let pieces=[];
-let timer;
 
 const grid=3;
-let timeLeft=60;
+
+let timer;
+let timeLeft=20;   // ✅ 20 seconds
 
 
 
 /* PAGE SWITCH */
 
-function show(page){
+function showPage(page){
 
 document
 .querySelectorAll(".page")
@@ -38,14 +46,19 @@ page.classList.add("active");
 }
 
 
+
 /* START */
 
 startBtn.onclick=()=>{
 
-show(puzzlePage);
+showPage(puzzlePage);
 
 createPuzzle();
 startTimer();
+
+/* start music after user interaction */
+bgMusic.volume=0.5;
+bgMusic.play().catch(()=>{});
 
 };
 
@@ -57,11 +70,12 @@ function startTimer(){
 
 clearInterval(timer);
 
-timeLeft=60;
+timeLeft=20;
 
 timer=setInterval(()=>{
 
 timeLeft--;
+
 timerText.textContent=timeLeft;
 
 if(timeLeft<=0){
@@ -76,7 +90,7 @@ location.reload();
 
 
 
-/* PUZZLE */
+/* CREATE PUZZLE */
 
 function createPuzzle(){
 
@@ -126,8 +140,8 @@ if(!selected){
 
 selected=p;
 p.classList.add("selected");
-
 return;
+
 }
 
 swap(selected,p);
@@ -158,7 +172,9 @@ b.dataset.current=data;
 
 
 
-/* WIN */
+/* ======================
+   WIN CONDITION
+====================== */
 
 function checkWin(){
 
@@ -167,17 +183,151 @@ pieces.every(
 (p,i)=>p.dataset.current==i
 );
 
-if(solved){
+if(!solved) return;
 
 clearInterval(timer);
 
-/* smooth delay */
+
+/* PHONE VIBRATION */
+
+if(navigator.vibrate){
+navigator.vibrate([200,100,200]);
+}
+
+
+/* CHANGE MUSIC */
+
+bgMusic.pause();
+winMusic.volume=0.7;
+winMusic.play().catch(()=>{});
+
+
+/* CUPID ARROW */
+
+shootArrow();
+
+
+/* CONFETTI */
+
+setTimeout(spawnConfetti,600);
+
+
+/* MOVE PAGE */
+
 setTimeout(()=>{
 
-show(cluePage);
+showPage(cluePage);
 
-},900);
+},1700);
+
+}
+
+
+
+/* ======================
+   CUPID ARROW
+====================== */
+
+function shootArrow(){
+
+arrow.style.display="block";
+
+arrow.style.position="fixed";
+arrow.style.left="-100px";
+arrow.style.top="50%";
+
+arrow.style.fontSize="40px";
+
+arrow.animate(
+
+[
+{ transform:"translateX(0)" },
+{ transform:"translateX(120vw)" }
+
+],
+
+{
+duration:1200,
+easing:"ease-in-out"
+}
+
+);
+
+setTimeout(()=>{
+arrow.style.display="none";
+},1300);
+
+}
+
+
+
+/* ======================
+   HEART CONFETTI
+====================== */
+
+function spawnConfetti(){
+
+const emojis=[
+"💖","💕","❤️","💘","🌹"
+];
+
+for(let i=0;i<60;i++){
+
+const c=document.createElement("div");
+
+c.innerHTML=
+emojis[Math.floor(Math.random()*emojis.length)];
+
+c.style.position="fixed";
+
+c.style.left=Math.random()*100+"vw";
+c.style.top="-20px";
+
+c.style.fontSize=
+(18+Math.random()*20)+"px";
+
+c.style.zIndex="999";
+
+c.style.animation=
+`fall ${3+Math.random()*2}s linear`;
+
+document.body.appendChild(c);
+
+setTimeout(()=>{
+c.remove();
+},5000);
 
 }
 
 }
+
+
+
+/* CONFETTI FALL */
+
+const style=document.createElement("style");
+
+style.innerHTML=`
+
+@keyframes fall{
+
+0%{
+transform:translateY(-20px) rotate(0);
+opacity:1;
+}
+
+100%{
+transform:translateY(110vh) rotate(720deg);
+opacity:0;
+}
+
+}
+
+#arrow{
+display:none;
+z-index:9999;
+}
+
+`;
+
+document.head.appendChild(style);
