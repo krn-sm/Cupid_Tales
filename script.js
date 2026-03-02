@@ -109,20 +109,48 @@ document.querySelector(".pass-box")
 
 
 /* TIMER */
-
 function startTimer(){
 
 clearInterval(timer);
 
-timeLeft=40;
+timeLeft = 30;
 
-timer=setInterval(()=>{
+timer = setInterval(()=>{
 
 timeLeft--;
 
-timerText.textContent=timeLeft;
+timerText.textContent = timeLeft;
 
-if(timeLeft<=0){
+
+/* LAST 10 SECONDS WARNING */
+
+if(timeLeft <= 10){
+
+document
+.querySelector(".timer")
+.classList.add("danger");
+
+}
+
+
+/* VIBRATION AT 5 SECONDS */
+
+if(timeLeft === 5){
+
+if(navigator.vibrate){
+
+navigator.vibrate([300,150,300]);
+
+}
+
+}
+
+
+/* TIME OVER */
+
+if(timeLeft <= 0){
+
+clearInterval(timer);
 
 location.reload();
 
